@@ -17,46 +17,28 @@ public class CategoryController {
     private CategoryService categoryService;
 
     @GetMapping
-    public ResponseEntity<List<Category>> getAllCategories(){
+    public ResponseEntity<List<Category>> getAllCategories() {
         return ResponseEntity.ok(categoryService.getAllCategories());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getCategoryById(@PathVariable UUID id){
-        try {
-            Category category = categoryService.getCategoryById(id);
-            return ResponseEntity.ok(category);
-        } catch (RuntimeException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+    public ResponseEntity<Category> getCategoryById(@PathVariable UUID id) {
+        return ResponseEntity.ok(categoryService.getCategoryById(id));
     }
 
     @PostMapping
-    public ResponseEntity<?> createCategory(@Valid @RequestBody Category category){
-        categoryService.saveCategory(category);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Category created successfully");
+    public ResponseEntity<Category> createCategory(@Valid @RequestBody Category category) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.saveCategory(category));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateCategory(@PathVariable UUID id,@Valid @RequestBody Category category){
-        try {
-            categoryService.getCategoryById(id);
-            category.setId(id);
-            categoryService.saveCategory(category);
-            return ResponseEntity.ok("Category updated successfully");
-        } catch (RuntimeException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+    public ResponseEntity<Category> updateCategory(@PathVariable UUID id, @Valid @RequestBody Category category) {
+        return ResponseEntity.ok(categoryService.saveCategory(category));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteCategory(@PathVariable UUID id){
-        try {
-            categoryService.getCategoryById(id);
-            categoryService.deleteCategory(id);
-            return ResponseEntity.ok("Category deleted successfully");
-        } catch (RuntimeException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+    public ResponseEntity<String> deleteCategory(@PathVariable UUID id) {
+        categoryService.deleteCategory(id);
+        return ResponseEntity.ok("Category deleted successfully");
     }
 }
