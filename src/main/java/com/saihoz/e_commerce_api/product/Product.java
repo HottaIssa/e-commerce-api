@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
+@Table(name = "products")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -39,8 +40,6 @@ public class Product {
     private String image;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
-    @JoinTable(name = "product_category", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
-    @NotNull(message = "Category cannot be null")
-    @Size(min = 1, message = "At least one category is required")
+    @JoinTable(name = "products_categories", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
     private List<Category> category;
 }
