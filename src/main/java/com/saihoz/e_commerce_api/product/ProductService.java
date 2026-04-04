@@ -1,5 +1,6 @@
 package com.saihoz.e_commerce_api.product;
 
+import com.saihoz.e_commerce_api.exception.ProductNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +18,7 @@ public class ProductService {
     }
 
     public Product getProductById(UUID id) {
-        return productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
+        return productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException("Product not found"));
     }
 
     public Product saveProduct(Product product) {
@@ -25,7 +26,7 @@ public class ProductService {
     }
 
     public Product updateProduct(UUID id, Product product) {
-        Product existingProduct = productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
+        Product existingProduct = productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException("Product not found"));
 
         existingProduct.setName(product.getName());
         existingProduct.setDescription(product.getDescription());
@@ -34,11 +35,11 @@ public class ProductService {
         existingProduct.setImage(product.getImage());
         existingProduct.setCategory(product.getCategory());
 
-        return productRepository.save(product);
+        return productRepository.save(existingProduct);
     }
 
     public void deleteProduct(UUID id) {
-        Product existingProduct = productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
+        Product existingProduct = productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException("Product not found"));
         productRepository.deleteById(id);
     }
 

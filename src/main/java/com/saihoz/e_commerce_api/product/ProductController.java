@@ -1,6 +1,8 @@
 package com.saihoz.e_commerce_api.product;
 
-import com.saihoz.e_commerce_api.exception.ProductNotFoundException;
+import com.saihoz.e_commerce_api.product.dto.ProductRequestDTO;
+import com.saihoz.e_commerce_api.product.dto.ProductResponseDTO;
+import com.saihoz.e_commerce_api.product.mapper.ProductMapper;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,6 +19,9 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
+    @Autowired
+    private ProductMapper productMapper;
+
     @GetMapping
     public ResponseEntity<List<Product>> getAllProducts() {
         return ResponseEntity.ok(productService.getAllProducts());
@@ -28,14 +33,27 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<Product> createProduct(@RequestBody Product product) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(productService.saveProduct(product));
+    public ResponseEntity<ProductResponseDTO> createProduct(@Valid @RequestBody ProductRequestDTO request) {
+
+        Product product = productMapper.toEntity(request);
+
+        Product saved = productService.saveProduct(product);
+
+        ProductResponseDTO response = productMapper.toDTO(saved);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable UUID id, @Valid @RequestBody Product product) {
-        return ResponseEntity.ok(productService.saveProduct(product)
-        );
+    public ResponseEntity<ProductResponseDTO> updateProduct(@PathVariable UUID id, @Valid @RequestBody ProductRequestDTO request) {
+
+        Product product = productMapper.toEntity(request);
+
+        Product updated = productService.updateProduct(id, product);
+
+        ProductResponseDTO response = productMapper.toDTO(updated);
+
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
