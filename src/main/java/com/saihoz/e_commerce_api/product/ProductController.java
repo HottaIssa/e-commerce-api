@@ -16,26 +16,44 @@ import java.util.UUID;
 @RequestMapping("/api/v1/products")
 public class ProductController {
 
-    @Autowired
-    private ProductService productService;
+    private final ProductService productService;
 
-    @Autowired
-    private ProductMapper productMapper;
+    private final ProductMapper productMapper;
+
+    private final CategoryRepository categoryRepository;
+
+    public ProductController(ProductService productService, ProductMapper productMapper, CategoryRepository categoryRepository) {
+        this.productService = productService;
+        this.productMapper = productMapper;
+        this.categoryRepository = categoryRepository;
+    }
 
     @GetMapping
-    public ResponseEntity<List<Product>> getAllProducts() {
-        return ResponseEntity.ok(productService.getAllProducts());
+    public ResponseEntity<List<ProductResponseDTO>> getAllProducts() {
+
+        List<Product> products = productService.getAllProducts();
+
+        return ResponseEntity.ok(
+                productMapper.toDTOList(products)
+        );
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getProductById(@PathVariable UUID id) {
-        return ResponseEntity.ok(productService.getProductById(id));
+    public ResponseEntity<ProductResponseDTO> getProductById(@PathVariable UUID id) {
+        return ResponseEntity.ok(
+                productMapper.toDTO(productService.getProductById(id))
+        );
     }
 
     @PostMapping
     public ResponseEntity<ProductResponseDTO> createProduct(@Valid @RequestBody ProductRequestDTO request) {
 
         Product product = productMapper.toEntity(request);
+
+        List<Category> categories = categoryRepository.findAllById(request.getCategoryIds());
+
+        product.setCategories(categories);
+
 
         Product saved = productService.saveProduct(product);
 

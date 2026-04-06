@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class CategoryService {
@@ -17,7 +16,7 @@ public class CategoryService {
         return categoryRepository.findAll();
     }
 
-    public Category getCategoryById(UUID id) {
+    public Category getCategoryById(Long id) {
         return categoryRepository.findById(id).orElseThrow(() -> new CategoryNotFoundException("Category not found"));
     }
 
@@ -25,13 +24,13 @@ public class CategoryService {
         return categoryRepository.save(category);
     }
 
-    public Category updateCategory(UUID id, Category category) {
+    public Category updateCategory(Long id, Category category) {
         Category existingCategory = categoryRepository.findById(id).orElseThrow(() -> new CategoryNotFoundException("Category not found"));
         existingCategory.setName(category.getName());
         return categoryRepository.save(existingCategory);
     }
 
-    public void deleteCategory(UUID id) {
+    public void deleteCategory(Long id) {
         Category existingCategory = categoryRepository.findById(id).orElseThrow(() -> new CategoryNotFoundException("Category not found"));
         categoryRepository.deleteById(id);
     }

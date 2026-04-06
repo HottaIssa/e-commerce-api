@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 @Table(name = "categories")
@@ -20,8 +19,8 @@ import java.util.UUID;
 public class Category {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(unique = true)
     @NotNull(message = "Name cannot be null")
@@ -29,6 +28,6 @@ public class Category {
     private String name;
     private String description;
 
-    @ManyToMany(mappedBy = "category")
-    private List<Product> product;
+    @ManyToMany(mappedBy = "categories")
+    private List<Product> products;
 }

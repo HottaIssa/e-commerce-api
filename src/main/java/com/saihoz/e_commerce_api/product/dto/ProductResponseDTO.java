@@ -17,6 +17,6 @@ public class ProductResponseDTO {
     private String description;
     private String image;
 
-    private List<String> categories;
+    private List<CategoryResponseDTO> categories;
 
 }
