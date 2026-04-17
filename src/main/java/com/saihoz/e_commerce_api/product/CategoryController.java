@@ -22,8 +22,11 @@ public class CategoryController {
     private CategoryMapper categoryMapper;
 
     @GetMapping
-    public ResponseEntity<List<Category>> getAllCategories() {
-        return ResponseEntity.ok(categoryService.getAllCategories());
+    public ResponseEntity<List<CategoryResponseDTO>> getAllCategories() {
+
+        List<Category> categories = categoryService.getAllCategories();
+
+        return ResponseEntity.ok(categoryMapper.toDTOList(categories));
     }
 
     @GetMapping("/{id}")
