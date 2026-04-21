@@ -1,4 +1,4 @@
-package com.saihoz.e_commerce_api.order;
+package com.saihoz.e_commerce_api.cart;
 
 import com.saihoz.e_commerce_api.user.User;
 import jakarta.persistence.*;
@@ -15,34 +15,28 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "orders")
+@Table(name = "carts")
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class Order {
+@AllArgsConstructor
+public class Cart {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<OrderItem> items = new ArrayList<>();
-
-    private double total_amount;
-
-    private String shippingAddress;
-
-    @Enumerated(EnumType.STRING)
-    private OrderStatus status;
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CartItem> items = new ArrayList<>();
 
     @CreationTimestamp
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
 }
