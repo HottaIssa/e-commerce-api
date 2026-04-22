@@ -18,6 +18,9 @@ public class RegisterRequestDTO {
     @Email(message = "Email should be valid")
     private String email;
 
+    @NotBlank(message = "Phone cannot be blank")
+    private String phone;
+
     @NotBlank(message = "Password cannot be blank")
     @Size(min = 8, message = "Password should be at least 8 characters long")
     private String password;

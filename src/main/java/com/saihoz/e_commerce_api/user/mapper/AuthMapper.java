@@ -11,6 +11,7 @@ public class AuthMapper {
         User user = new User();
         user.setName(registerRequest.getName());
         user.setEmail(registerRequest.getEmail());
+        user.setPhone(registerRequest.getPhone());
         user.setPassword(registerRequest.getPassword());
         return user;
     }

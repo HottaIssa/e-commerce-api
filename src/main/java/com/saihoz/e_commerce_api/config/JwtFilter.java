@@ -1,7 +1,7 @@
 package com.saihoz.e_commerce_api.config;
 
 import com.saihoz.e_commerce_api.user.JwtService;
-import com.saihoz.e_commerce_api.user.MyUserDetailsService;
+import com.saihoz.e_commerce_api.user.UserDetailsServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,7 +39,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
         if(userName != null && SecurityContextHolder.getContext().getAuthentication() == null){
 
-            UserDetails userDetails = context.getBean(MyUserDetailsService.class).loadUserByUsername(userName);
+            UserDetails userDetails = context.getBean(UserDetailsServiceImpl.class).loadUserByUsername(userName);
 
             if(jwtService.validateToken(token, userDetails)){
                 UsernamePasswordAuthenticationToken authToken =

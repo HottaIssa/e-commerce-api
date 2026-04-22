@@ -1,13 +1,15 @@
 package com.saihoz.e_commerce_api.user;
 
+import com.saihoz.e_commerce_api.user.dto.AuthResponseDTO;
 import com.saihoz.e_commerce_api.user.dto.LoginRequestDTO;
 import com.saihoz.e_commerce_api.user.dto.RegisterRequestDTO;
 import com.saihoz.e_commerce_api.user.mapper.AuthMapper;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,16 +17,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("api/v1/auth")
+@RequiredArgsConstructor
 public class UserController {
 
-    @Autowired
-    private UserService service;
-
-    @Autowired
-    private JwtService jwtService;
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    private final UserService service;
+    private final JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
+    private final UserRepository userRepository;
 
     @Autowired
     private AuthMapper authMapper;
@@ -34,21 +33,23 @@ public class UserController {
 
         User user = authMapper.fromDto(request);
 
-        user.setRole(UserRole.ADMIN);
+        user.setRole(UserRole.ROLE_USER);
 
         return service.saveUser(user);
     }
 
     @PostMapping("login")
-    public String login(@Valid @RequestBody LoginRequestDTO request){
+    public AuthResponseDTO login(@Valid @RequestBody LoginRequestDTO request){
 
-        Authentication authentication = authenticationManager
+        authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
-        if(authentication.isAuthenticated())
-            return jwtService.generateToken(request.getEmail());
-        else
-            return "Login Failed";
+        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(
+                () -> new UsernameNotFoundException("User not found")
+        );
+
+        String token = jwtService.generateToken(user.getEmail());
+        return new AuthResponseDTO(token, user.getName(), user.getRole().name());
 
     }
 
