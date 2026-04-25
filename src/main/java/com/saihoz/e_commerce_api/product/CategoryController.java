@@ -4,7 +4,7 @@ import com.saihoz.e_commerce_api.product.dto.CategoryRequestDTO;
 import com.saihoz.e_commerce_api.product.dto.CategoryResponseDTO;
 import com.saihoz.e_commerce_api.product.mapper.CategoryMapper;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,24 +14,21 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/categories")
+@RequiredArgsConstructor
 public class CategoryController {
 
-    @Autowired
-    private CategoryService categoryService;
+    private final CategoryService categoryService;
 
-    @Autowired
-    private CategoryMapper categoryMapper;
+    private final CategoryMapper categoryMapper;
 
     @GetMapping
     public ResponseEntity<List<CategoryResponseDTO>> getAllCategories() {
 
-        List<Category> categories = categoryService.getAllCategories();
-
-        return ResponseEntity.ok(categoryMapper.toDTOList(categories));
+        return ResponseEntity.ok(categoryService.getAllCategories());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Category> getCategoryById(@PathVariable Long id) {
+    public ResponseEntity<CategoryResponseDTO> getCategoryById(@PathVariable Long id) {
         return ResponseEntity.ok(categoryService.getCategoryById(id));
     }
 
@@ -40,23 +37,19 @@ public class CategoryController {
     public ResponseEntity<CategoryResponseDTO> createCategory(
             @Valid @RequestBody CategoryRequestDTO request) {
 
-        Category category = categoryMapper.toEntity(request);
-
-        Category saved = categoryService.saveCategory(category);
+        CategoryResponseDTO saved = categoryService.saveCategory(request);
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(categoryMapper.toDTO(saved));
+                .body(saved);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CategoryResponseDTO> updateCategory(@PathVariable Long id, @Valid @RequestBody CategoryRequestDTO request) {
 
-        Category category = categoryMapper.toEntity(request);
+        CategoryResponseDTO updated = categoryService.updateCategory(id, request);
 
-        Category updated = categoryService.updateCategory(id, category);
-
-        return ResponseEntity.ok(categoryMapper.toDTO(updated));
+        return ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/{id}")

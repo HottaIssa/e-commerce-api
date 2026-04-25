@@ -35,22 +35,18 @@ public class OrderService {
     @Transactional
     public OrderResponseDTO createOrder(User user, CreateOrderRequestDTO request) {
 
-        // 1. Obtener el carrito del usuario
         Cart cart = cartRepository.findByUser(user)
                 .orElseThrow(() -> new ResourceNotFoundException("No tienes un carrito activo"));
 
-        // 2. Validar que el carrito no esté vacío
         if (cart.getItems().isEmpty()) {
             throw new BadRequestException("Tu carrito está vacío");
         }
 
-        // 3. Validar stock y construir OrderItems
         List<OrderItem> orderItems = new ArrayList<>();
 
         for (CartItem cartItem : cart.getItems()) {
             Product product = cartItem.getProduct();
 
-            // Verificar que hay stock suficiente
             if (product.getStock() < cartItem.getQuantity()) {
                 throw new BadRequestException(
                         "Stock insuficiente para el producto: " + product.getName() +
@@ -58,11 +54,9 @@ public class OrderService {
                 );
             }
 
-            // Descontar stock
             product.setStock(product.getStock() - cartItem.getQuantity());
             productRepository.save(product);
 
-            // Crear el OrderItem con el precio actual del producto
             OrderItem orderItem = new OrderItem();
             orderItem.setProduct(product);
             orderItem.setQuantity(cartItem.getQuantity());

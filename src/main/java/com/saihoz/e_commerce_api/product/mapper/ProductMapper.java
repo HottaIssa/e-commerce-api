@@ -4,16 +4,16 @@ import com.saihoz.e_commerce_api.product.Category;
 import com.saihoz.e_commerce_api.product.Product;
 import com.saihoz.e_commerce_api.product.dto.ProductRequestDTO;
 import com.saihoz.e_commerce_api.product.dto.ProductResponseDTO;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
+@RequiredArgsConstructor
 public class ProductMapper {
 
-    @Autowired
-    private CategoryMapper categoryMapper;
+    private final CategoryMapper categoryMapper;
 
     public Product toEntity(ProductRequestDTO dto) {
         Product product = new Product();
@@ -21,7 +21,6 @@ public class ProductMapper {
         product.setPrice(dto.getPrice());
         product.setStock(dto.getStock());
         product.setDescription(dto.getDescription());
-        product.setImage(dto.getImage());
         return product;
     }
 

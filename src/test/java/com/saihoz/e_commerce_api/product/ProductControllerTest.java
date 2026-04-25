@@ -4,8 +4,8 @@ import com.saihoz.e_commerce_api.product.dto.ProductRequestDTO;
 import com.saihoz.e_commerce_api.product.dto.ProductResponseDTO;
 import com.saihoz.e_commerce_api.product.mapper.ProductMapper;
 
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
@@ -20,10 +20,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(ProductController.class)
+@RequiredArgsConstructor
 class ProductControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+    private final MockMvc mockMvc;
 
     @MockitoBean
     private ProductService productService;
@@ -31,8 +31,7 @@ class ProductControllerTest {
     @MockitoBean
     private ProductMapper productMapper;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
     @Test
     void shouldCreateProduct() throws Exception {
@@ -59,7 +58,7 @@ class ProductControllerTest {
         response.setStock(10);
 
         when(productMapper.toEntity(any(ProductRequestDTO.class))).thenReturn(product);
-        when(productService.saveProduct(product)).thenReturn(savedProduct);
+        when(productService.saveProduct(request)).thenReturn(response);
         when(productMapper.toDTO(savedProduct)).thenReturn(response);
 
         mockMvc.perform(post("/api/v1/products")
@@ -82,7 +81,7 @@ class ProductControllerTest {
         response.setId(id);
         response.setName("Mouse");
 
-        when(productService.getProductById(id)).thenReturn(product);
+        when(productService.getProductById(id)).thenReturn(response);
         when(productMapper.toDTO(product)).thenReturn(response);
 
         mockMvc.perform(get("/api/v1/products/{id}", id))
@@ -99,7 +98,7 @@ class ProductControllerTest {
         ProductResponseDTO response = new ProductResponseDTO();
         response.setName("Keyboard");
 
-        when(productService.getAllProducts()).thenReturn(java.util.List.of(product));
+        when(productService.getAllProducts()).thenReturn(java.util.List.of(response));
         when(productMapper.toDTO(product)).thenReturn(response);
 
         mockMvc.perform(get("/api/v1/products"))
@@ -134,8 +133,8 @@ class ProductControllerTest {
         when(productMapper.toEntity(any(ProductRequestDTO.class)))
                 .thenReturn(createdProduct);
 
-        when(productService.updateProduct(id, createdProduct))
-                .thenReturn(updatedProduct);
+        when(productService.updateProduct(id, request))
+                .thenReturn(response);
 
         when(productMapper.toDTO(updatedProduct))
                 .thenReturn(response);

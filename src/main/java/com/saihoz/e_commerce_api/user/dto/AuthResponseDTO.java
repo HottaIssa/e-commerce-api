@@ -1,6 +1,5 @@
 package com.saihoz.e_commerce_api.user.dto;
 
-import com.saihoz.e_commerce_api.user.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
